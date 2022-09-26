@@ -1,8 +1,8 @@
 package com.gyl.order.service.impl;
 
+import com.gyl.order.api.OrderDubboService;
 import com.gyl.order.dao.OrderMapper;
 import com.gyl.order.dto.Order;
-import com.gyl.order.service.OrderDubboService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.stereotype.Component;

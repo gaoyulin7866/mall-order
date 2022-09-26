@@ -4,8 +4,9 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
+//@EnableDubbo(scanBasePackages = "com.gyl.order.api")
 @Slf4j
-@EnableDubbo(scanBasePackages = "com.gyl.order.service")
+@EnableDubbo
 @EnableAutoConfiguration
 @MapperScan(basePackages = "com.gyl.order.dao")
 public class MallOrderApplication {

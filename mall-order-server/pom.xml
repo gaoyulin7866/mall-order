@@ -38,9 +38,10 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-<!--                <version>2.2.2.RELEASE</version>-->
+                <version>2.2.2.RELEASE</version>
                 <configuration>
-                    <mainClass>com.gyl.order.MallOrderApplication</mainClass>
+<!--                    <classifier>exec</classifier>-->
+<!--                    <mainClass>com.gyl.order.MallOrderApplication</mainClass>-->
                 </configuration>
                 <executions>
                     <execution>
