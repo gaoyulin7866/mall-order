@@ -163,7 +163,7 @@
       #{item.quantity,jdbcType=INTEGER},
       #{item.totalPrice,jdbcType=INTEGER},
       #{item.createTime,jdbcType=TIMESTAMP},
-      #{item.updateTime,jdbcType=TIMESTAMP},
+      #{item.updateTime,jdbcType=TIMESTAMP}
     </foreach>
   </insert>
   <select id="selectByOrderNo" parameterType="java.lang.String" resultType="com.gyl.order.dto.OrderItem">

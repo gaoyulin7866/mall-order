@@ -51,7 +51,7 @@ public class OrderDubboServiceImpl implements OrderDubboService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void create(String receiverName, Integer receiverMobile, String receiverAddress, Integer userId) {
+    public void create(String receiverName, String receiverMobile, String receiverAddress, Integer userId) {
 
         List<Cart> carts = cartMapper.selectAllSelected(userId);
         if (carts.size() == 0){
@@ -79,11 +79,12 @@ public class OrderDubboServiceImpl implements OrderDubboService {
 
         Order order = new Order();
         order.setCreateTime(new Date());
+        order.setUpdateTime(new Date());
         order.setOrderNo(orderNo);
         order.setUserId(userId);
         order.setTotalPrice(totalPrice);
         order.setReceiverAddress(receiverAddress);
-        order.setReceiverMobile(String.valueOf(receiverMobile));
+        order.setReceiverMobile(receiverMobile);
         order.setReceiverName(receiverName);
         order.setOrderStatus(OrderStatus.ORDER_NOT_PAY.getCode());
         order.setPostage(10);
@@ -102,23 +103,27 @@ public class OrderDubboServiceImpl implements OrderDubboService {
     @Override
     public OrderVo detail(String orderNo, Integer userId) {
         Order order = orderMapper.selectByOrderNo(orderNo, userId);
-        OrderVo orderVo = new OrderVo();
-        orderVo.setCreateTime(order.getCreateTime());
-        orderVo.setDeliveryTime(order.getDeliveryTime());
-        orderVo.setEndTime(order.getEndTime());
-        orderVo.setOrderNo(orderNo);
-        orderVo.setOrderStatus(order.getOrderStatus());
-        orderVo.setOrderStatusName(OrderStatus.getStatusByCode(order.getOrderStatus()).getDesc());
-        orderVo.setPaymentType(order.getPaymentType());
-        orderVo.setPayTime(order.getPayTime());
-        orderVo.setPostage(order.getPostage());
-        orderVo.setReceiverAddress(order.getReceiverAddress());
-        orderVo.setReceiverMobile(order.getReceiverMobile());
-        orderVo.setReceiverName(order.getReceiverName());
-        orderVo.setTotalPrice(order.getTotalPrice());
-        orderVo.setUserId(order.getUserId());
-        orderVo.setOrderItemList(getOrderItemVos(orderNo));
-        return orderVo;
+        if (order != null) {
+            OrderVo orderVo = new OrderVo();
+            orderVo.setCreateTime(order.getCreateTime());
+            orderVo.setDeliveryTime(order.getDeliveryTime());
+            orderVo.setEndTime(order.getEndTime());
+            orderVo.setOrderNo(orderNo);
+            orderVo.setOrderStatus(order.getOrderStatus());
+            orderVo.setOrderStatusName(OrderStatus.getStatusByCode(order.getOrderStatus()).getDesc());
+            orderVo.setPaymentType(order.getPaymentType());
+            orderVo.setPayTime(order.getPayTime());
+            orderVo.setPostage(order.getPostage());
+            orderVo.setReceiverAddress(order.getReceiverAddress());
+            orderVo.setReceiverMobile(order.getReceiverMobile());
+            orderVo.setReceiverName(order.getReceiverName());
+            orderVo.setTotalPrice(order.getTotalPrice());
+            orderVo.setUserId(order.getUserId());
+            orderVo.setOrderItemList(getOrderItemVos(orderNo));
+            return orderVo;
+        } else {
+            throw new MallException(ExceptionEnum.ORDER_NOT_FOUND);
+        }
     }
 
     @Override
@@ -170,7 +175,7 @@ public class OrderDubboServiceImpl implements OrderDubboService {
     }
 
     @Override
-    public List<OrderVo> listByAdmin(Integer pageNum, Integer pageSize) {
+    public List<com.gyl.shopping.vo.OrderVo> listByAdmin(Integer pageNum, Integer pageSize) {
         if (pageNum == null || pageNum < 1) {
             pageNum = 1;
         }
@@ -179,7 +184,7 @@ public class OrderDubboServiceImpl implements OrderDubboService {
         }
         Integer offset = (pageNum-1)*pageSize;
         List<Order> orders = orderMapper.selectByAdminPage(offset, pageSize);
-        List<OrderVo> list = new ArrayList<>();
+        List<com.gyl.shopping.vo.OrderVo> list = new ArrayList<>();
         for (Order order : orders) {
             OrderVo orderVo = new OrderVo();
             orderVo.setUserId(order.getUserId());
@@ -223,7 +228,7 @@ public class OrderDubboServiceImpl implements OrderDubboService {
     }
 
     @Override
-    public List<OrderVo> list(Integer pageNum, Integer pageSize, Integer userId) {
+    public List<com.gyl.shopping.vo.OrderVo> list(Integer pageNum, Integer pageSize, Integer userId) {
         if (pageNum == null || pageNum < 1) {
             pageNum = 1;
         }
@@ -232,7 +237,7 @@ public class OrderDubboServiceImpl implements OrderDubboService {
         }
         Integer offset = (pageNum-1)*pageSize;
         List<Order> orders = orderMapper.selectByPage(offset, pageSize, userId);
-        List<OrderVo> list = new ArrayList<>();
+        List<com.gyl.shopping.vo.OrderVo> list = new ArrayList<>();
         for (Order order : orders) {
             OrderVo orderVo = new OrderVo();
             orderVo.setUserId(userId);
