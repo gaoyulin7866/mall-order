@@ -2,18 +2,17 @@ package com.gyl.order.service.impl;
 
 import com.google.zxing.WriterException;
 import com.gyl.order.api.OrderDubboService;
-import com.gyl.order.dao.CartMapper;
 import com.gyl.order.dao.OrderItemMapper;
 import com.gyl.order.dao.OrderMapper;
-import com.gyl.order.dao.ProductMapper;
 import com.gyl.order.dto.Order;
-import com.gyl.order.dto.Cart;
 import com.gyl.order.dto.OrderItem;
-import com.gyl.order.dto.Product;
 import com.gyl.order.vo.OrderItemVo;
 import com.gyl.order.vo.OrderVo;
+import com.gyl.shopping.api.CartDubboService;
 import com.gyl.shopping.common.*;
+import com.gyl.shopping.dto.Cart;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.Reference;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -38,22 +37,19 @@ public class OrderDubboServiceImpl implements OrderDubboService {
     private String qrcodeAddr;
 
     @Resource
-    private CartMapper cartMapper;
-
-    @Resource
     private OrderMapper orderMapper;
 
     @Resource
     private OrderItemMapper orderItemMapper;
 
-    @Resource
-    private ProductMapper productMapper;
+    @Reference(version = "${demo.service.version}", group = "${demo.service.group}", check = false)
+    private CartDubboService cartDubboService;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void create(String receiverName, String receiverMobile, String receiverAddress, Integer userId) {
 
-        List<Cart> carts = cartMapper.selectAllSelected(userId);
+        List<com.gyl.shopping.dto.Cart> carts = cartDubboService.selectAllSelected(userId);
         if (carts.size() == 0){
             throw new MallException(ExceptionEnum.EMPTY_CART);
         }
@@ -63,7 +59,7 @@ public class OrderDubboServiceImpl implements OrderDubboService {
         List<OrderItem> orderItems = new ArrayList<>();
         for (Cart cart : carts) {
             OrderItem orderItem = new OrderItem();
-            Product product = productMapper.selectByPrimaryKey(cart.getId());
+            com.gyl.shopping.dto.Product product = cartDubboService.selectByPrimaryKey(cart.getId());
             totalPrice += cart.getQuantity() * product.getPrice();
             orderItem.setCreateTime(new Date());
             orderItem.setProductId(product.getId());
@@ -175,7 +171,7 @@ public class OrderDubboServiceImpl implements OrderDubboService {
     }
 
     @Override
-    public List<com.gyl.shopping.vo.OrderVo> listByAdmin(Integer pageNum, Integer pageSize) {
+    public List<OrderVo> listByAdmin(Integer pageNum, Integer pageSize) {
         if (pageNum == null || pageNum < 1) {
             pageNum = 1;
         }
@@ -184,7 +180,7 @@ public class OrderDubboServiceImpl implements OrderDubboService {
         }
         Integer offset = (pageNum-1)*pageSize;
         List<Order> orders = orderMapper.selectByAdminPage(offset, pageSize);
-        List<com.gyl.shopping.vo.OrderVo> list = new ArrayList<>();
+        List<OrderVo> list = new ArrayList<>();
         for (Order order : orders) {
             OrderVo orderVo = new OrderVo();
             orderVo.setUserId(order.getUserId());
@@ -228,7 +224,7 @@ public class OrderDubboServiceImpl implements OrderDubboService {
     }
 
     @Override
-    public List<com.gyl.shopping.vo.OrderVo> list(Integer pageNum, Integer pageSize, Integer userId) {
+    public List<OrderVo> list(Integer pageNum, Integer pageSize, Integer userId) {
         if (pageNum == null || pageNum < 1) {
             pageNum = 1;
         }
@@ -237,7 +233,7 @@ public class OrderDubboServiceImpl implements OrderDubboService {
         }
         Integer offset = (pageNum-1)*pageSize;
         List<Order> orders = orderMapper.selectByPage(offset, pageSize, userId);
-        List<com.gyl.shopping.vo.OrderVo> list = new ArrayList<>();
+        List<OrderVo> list = new ArrayList<>();
         for (Order order : orders) {
             OrderVo orderVo = new OrderVo();
             orderVo.setUserId(userId);

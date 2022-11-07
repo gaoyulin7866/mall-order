@@ -1,6 +1,7 @@
 package com.gyl.order.api;
 
-import com.gyl.shopping.vo.OrderVo;
+
+import com.gyl.order.vo.OrderVo;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ public interface OrderDubboService {
 
     void create(String receiverName, String receiverMobile, String receiverAddress, Integer userId);
 
-    List<com.gyl.shopping.vo.OrderVo> list(Integer pageNum, Integer pageSize, Integer userId);
+    List<OrderVo> list(Integer pageNum, Integer pageSize, Integer userId);
 
     OrderVo detail(String orderNo, Integer userId);
 
@@ -20,7 +21,7 @@ public interface OrderDubboService {
 
     void pay(String orderNo, Integer userId);
 
-    List<com.gyl.shopping.vo.OrderVo> listByAdmin(Integer pageNum, Integer pageSize);
+    List<OrderVo> listByAdmin(Integer pageNum, Integer pageSize);
 
     void delivered(String orderNo);
 }
