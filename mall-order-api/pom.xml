@@ -20,7 +20,6 @@
         <dependency>
             <groupId>com.gyl.shopping</groupId>
             <artifactId>shopping-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
